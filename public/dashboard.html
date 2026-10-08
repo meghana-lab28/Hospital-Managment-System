@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarePlus Admin - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar Navigation Panel -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>CAREPLUS</h2>
+                <p id="user-tagline">Loading session...</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><button id="menu-patients" class="menu-btn active" data-target="patients">Patients Management</button></li>
+                <li><button id="menu-doctors" class="menu-btn" data-target="doctors">Doctors Directory</button></li>
+                <li><button id="menu-book-appt" class="menu-btn" data-target="book-appt">Book Appointment</button></li>
+                <li><button id="menu-appt-records" class="menu-btn" data-target="appt-records">Appointment Records</button></li>
+                <li style="margin-top: auto;"><button id="btn-logout" class="menu-btn" style="color: #fca5a5;">Logout</button></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- PANEL 1: PATIENTS -->
+            <div id="panel-patients" class="panel active">
+                <div class="panel-header">
+                    <h2>Patient Database Management</h2>
+                </div>
+                <div class="split-layout">
+                    <!-- Form Card -->
+                    <div class="card">
+                        <h3>Patient Information Form</h3>
+                        <form id="form-patient">
+                            <div class="form-group">
+                                <label for="pat-id">Patient ID (Auto)</label>
+                                <input type="text" id="pat-id" class="form-control" disabled placeholder="Generated automatically">
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-name">Full Name</label>
+                                <input type="text" id="pat-name" class="form-control" required placeholder="Full Name">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label for="pat-age">Age</label>
+                                    <input type="number" id="pat-age" class="form-control" required placeholder="Age">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pat-gender">Gender</label>
+                                    <select id="pat-gender" class="form-control">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label for="pat-phone">Phone Number</label>
+                                    <input type="text" id="pat-phone" class="form-control" required placeholder="10 Digits">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pat-blood">Blood Group</label>
+                                    <select id="pat-blood" class="form-control">
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-email">Email Address</label>
+                                <input type="email" id="pat-email" class="form-control" required placeholder="email@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-address">Residential Address</label>
+                                <textarea id="pat-address" class="form-control" rows="3" required placeholder="Street address, City"></textarea>
+                            </div>
+                            <div class="form-actions-grid">
+                                <button type="submit" id="pat-btn-save" class="btn btn-primary">Save</button>
+                                <button type="button" id="pat-btn-update" class="btn btn-blue">Update</button>
+                                <button type="button" id="pat-btn-delete" class="btn btn-danger">Delete</button>
+                                <button type="button" id="pat-btn-clear" class="btn btn-secondary">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- List Table Card -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Inline search -->
+                        <div class="filter-bar" style="margin-bottom: 0;">
+                            <div class="filter-group">
+                                <label for="pat-search-input">Search Patient (ID or Phone)</label>
+                                <input type="text" id="pat-search-input" class="form-control" placeholder="Type ID or Phone number...">
+                            </div>
+                            <div class="filter-actions">
+                                <button id="pat-btn-search" class="btn btn-primary" style="height: 38px;">Search</button>
+                                <button id="pat-btn-refresh" class="btn btn-secondary" style="height: 38px;">Refresh</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="table-patients">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Blood</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 2: DOCTORS -->
+            <div id="panel-doctors" class="panel">
+                <div class="panel-header">
+                    <h2>Doctor Roster Management</h2>
+                </div>
+                <div class="split-layout">
+                    <!-- Form Card -->
+                    <div class="card">
+                        <h3>Doctor Record Form</h3>
+                        <div id="doctor-locked-banner" class="banner-locked" style="display: none;">
+                            View-Only Access (Editing Restricted to Admin)
+                        </div>
+                        <form id="form-doctor">
+                            <div class="form-group">
+                                <label for="doc-id">Doctor ID (Auto)</label>
+                                <input type="text" id="doc-id" class="form-control" disabled placeholder="Generated automatically">
+                            </div>
+                            <div class="form-group">
+                                <label for="doc-name">Doctor Name</label>
+                                <input type="text" id="doc-name" class="form-control" required placeholder="Dr. Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="doc-spec">Specialization</label>
+                                <input type="text" id="doc-spec" class="form-control" required placeholder="e.g. Cardiology">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label for="doc-exp">Experience (Years)</label>
+                                    <input type="number" id="doc-exp" class="form-control" required placeholder="e.g. 8">
+                                </div>
+                                <div class="form-group">
+                                    <label for="doc-fee">Consultation Fee ($)</label>
+                                    <input type="number" step="0.01" id="doc-fee" class="form-control" required placeholder="Fee">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="doc-time">Available Time Slots</label>
+                                <input type="text" id="doc-time" class="form-control" required placeholder="e.g. 09:00 AM - 01:00 PM">
+                            </div>
+                            <div class="form-actions-grid" id="doctor-actions">
+                                <button type="submit" id="doc-btn-save" class="btn btn-primary">Save</button>
+                                <button type="button" id="doc-btn-update" class="btn btn-blue">Update</button>
+                                <button type="button" id="doc-btn-delete" class="btn btn-danger">Delete</button>
+                                <button type="button" id="doc-btn-clear" class="btn btn-secondary">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- List Table Card -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="table-container">
+                            <table class="data-table" id="table-doctors">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Doctor Name</th>
+                                        <th>Specialization</th>
+                                        <th>Experience</th>
+                                        <th>Time Slots</th>
+                                        <th>Consultation Fee</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 3: BOOK APPOINTMENT -->
+            <div id="panel-book-appt" class="panel">
+                <div class="panel-header">
+                    <h2>Book New Patient Appointment</h2>
+                </div>
+                <div class="card" style="max-width: 650px; margin: 0 auto;">
+                    <h3>Appointment Details</h3>
+                    <form id="form-book-appt">
+                        <div class="form-group">
+                            <label for="appt-patient">Select Patient</label>
+                            <select id="appt-patient" class="form-control" required>
+                                <option value="">-- Choose Patient --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="appt-doctor">Select Doctor</label>
+                            <select id="appt-doctor" class="form-control" required>
+                                <option value="">-- Choose Doctor --</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label for="appt-date">Appointment Date</label>
+                                <input type="date" id="appt-date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="appt-time">Appointment Time (24h format)</label>
+                                <input type="time" id="appt-time" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="appt-reason">Reason for Visit</label>
+                            <textarea id="appt-reason" class="form-control" rows="4" required placeholder="Describe symptoms or reasons..."></textarea>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 25px;">
+                            <button type="button" id="appt-btn-clear" class="btn btn-secondary">Reset Fields</button>
+                            <button type="submit" class="btn btn-primary" style="padding: 12px 30px;">Confirm Appointment Booking</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- PANEL 4: APPOINTMENT RECORDS -->
+            <div id="panel-appt-records" class="panel">
+                <div class="panel-header">
+                    <h2>Appointment Records & Schedules</h2>
+                </div>
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filter-patient">Search Patient Name</label>
+                        <input type="text" id="filter-patient" class="form-control" placeholder="Patient Name...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-doctor">Search Doctor Name</label>
+                        <input type="text" id="filter-doctor" class="form-control" placeholder="Doctor Name...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-date">Date (YYYY-MM-DD)</label>
+                        <input type="date" id="filter-date" class="form-control">
+                    </div>
+                    <div class="filter-actions">
+                        <button id="filter-btn-search" class="btn btn-primary" style="height: 38px;">Search</button>
+                        <button id="filter-btn-reset" class="btn btn-secondary" style="height: 38px;">Reset</button>
+                    </div>
+                </div>
+
+                <!-- JTable Equivalent -->
+                <div class="table-container">
+                    <table class="data-table" id="table-appointments">
+                        <thead>
+                            <tr>
+                                <th>Appt ID</th>
+                                <th>Patient Name</th>
+                                <th>Doctor Name</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="action-controls">
+                    <button id="btn-appt-update" class="btn btn-blue" style="height: 42px;">Update Selected Appointment</button>
+                    <button id="btn-appt-cancel" class="btn btn-danger" style="height: 42px;">Cancel Selected Appointment</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ----------------------------------------------------
+         EDIT APPOINTMENT MODAL DIALOG
+         ---------------------------------------------------- -->
+    <div id="modal-edit-appt" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-title">Modify Appointment #00</h3>
+            <form id="form-edit-appt">
+                <input type="hidden" id="edit-appt-id">
+                <div class="form-group">
+                    <label for="edit-appt-doctor">Assigned Doctor</label>
+                    <select id="edit-appt-doctor" class="form-control" required>
+                        <!-- Dynamic options -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-appt-date">Date (YYYY-MM-DD)</label>
+                    <input type="date" id="edit-appt-date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-appt-time">Time (HH:MM)</label>
+                    <input type="time" id="edit-appt-time" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-appt-reason">Reason for Visit</label>
+                    <textarea id="edit-appt-reason" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" id="btn-close-modal" class="btn btn-secondary">Discard</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

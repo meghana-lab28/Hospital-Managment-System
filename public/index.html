@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarePlus Portal - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>CAREPLUS</h1>
+                <p>Hospital Appointment Management System</p>
+            </div>
+
+            <!-- Error Notification Banner -->
+            <div id="login-alert" class="alert"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required autocomplete="current-password">
+                </div>
+
+                <div class="login-actions">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="button" id="btn-clear" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simple authentication check
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/session');
+                const session = await res.json();
+                if (session.loggedIn) {
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (err) {
+                console.error("Session lookup failed:", err);
+            }
+        });
+
+        const loginForm = document.getElementById('login-form');
+        const loginAlert = document.getElementById('login-alert');
+        const btnClear = document.getElementById('btn-clear');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginAlert.style.display = 'none';
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    loginAlert.textContent = data.error || "Authentication failed.";
+                    loginAlert.style.display = 'block';
+                }
+            } catch (err) {
+                loginAlert.textContent = "Unable to connect to backend server.";
+                loginAlert.style.display = 'block';
+                console.error(err);
+            }
+        });
+
+        btnClear.addActionListener = btnClear.addEventListener('click', () => {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            loginAlert.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
